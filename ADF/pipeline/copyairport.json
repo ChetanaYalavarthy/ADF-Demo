@@ -1,0 +1,363 @@
+{
+	"name": "copyairport",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Json",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "Airport.json",
+							"container": "manualfiles"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "GetMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 2,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "airportsrc",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": {
+											"value": "@item().container_source",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().File_name_source",
+											"type": "Expression"
+										},
+										"directory": {
+											"value": "@item().directory_source",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"exists",
+									"itemName",
+									"childItems"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "GetMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('GetMetadata').output.exists",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Set variable1",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "File Not exists",
+											"value": {
+												"value": "@concat(\n  'File: ',\n    activity('GetMetadata').output.itemName,\n  ' | Status: Skipped',\n  ' | ErrorType: FileNotFound',\n  ' | Time: ',\n  utcNow()\n)",
+												"type": "Expression"
+											}
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy Data",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".txt"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "airportsrc",
+												"type": "DatasetReference",
+												"parameters": {
+													"container": {
+														"value": "@item().container_source",
+														"type": "Expression"
+													},
+													"filename": {
+														"value": "@item().File_name_source",
+														"type": "Expression"
+													},
+													"directory": {
+														"value": "@item().directory_source",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "airportsink",
+												"type": "DatasetReference",
+												"parameters": {
+													"container": {
+														"value": "@item().container_sink",
+														"type": "Expression"
+													},
+													"filename": {
+														"value": "@item().File_name_sink",
+														"type": "Expression"
+													},
+													"directory": {
+														"value": "@item().directory_sink",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Code",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Copy Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Error Code",
+											"value": {
+												"value": "@string(activity('Copy Data').output.errors[0].Code)",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Message",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Code",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Error Message",
+											"value": {
+												"value": "@string(activity('Copy Data').output.errors[0].Message)",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Stored procedure2",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[dbo].[usp_LogPipelineError]",
+											"storedProcedureParameters": {
+												"ErrorMessage": {
+													"value": {
+														"value": "@variables('Error Message')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ErrorType": {
+													"value": {
+														"value": "@variables('Error Code')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"FileName": {
+													"value": {
+														"value": "@activity('GetMetadata').output.itemName",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"RunId": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Status": {
+													"value": {
+														"value": "'Failed'",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "SQLDBSrc",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Error Message": {
+				"type": "String"
+			},
+			"Error Code": {
+				"type": "String"
+			},
+			"File Not exists": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-03-26T08:09:59Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
