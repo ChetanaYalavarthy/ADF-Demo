@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "projctdevadf"
+		},
+		"SQLDBSrc_password": {
+			"value": ""
+		},
+		"ADLSink_properties_typeProperties_url": {
+			"value": "https://datalakestrgdev.dfs.core.windows.net/"
+		},
+		"ADLSink_properties_typeProperties_tenant": {
+			"value": "abd71d73-ca15-43d0-b31b-f80bf5d0bfde"
+		},
+		"ADLSink_properties_typeProperties_servicePrincipalId": {
+			"value": "4c2413cd-9c4c-45de-ae9b-d45a9ebcf350"
+		},
+		"ADLSrc_properties_typeProperties_url": {
+			"value": "https://sorceadls.dfs.core.windows.net/"
+		},
+		"ADLSrc_properties_typeProperties_tenant": {
+			"value": "abd71d73-ca15-43d0-b31b-f80bf5d0bfde"
+		},
+		"ADLSrc_properties_typeProperties_servicePrincipalId": {
+			"value": "4c2413cd-9c4c-45de-ae9b-d45a9ebcf350"
+		},
+		"KeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://keyvaultdfordev.vault.azure.net/"
+		},
+		"RestAPISrc_properties_typeProperties_url": {
+			"value": " https://airlabs.co/api/v9/airlines"
+		},
+		"SQLDBSrc_properties_typeProperties_server": {
+			"value": "projectsrc.database.windows.net"
+		},
+		"SQLDBSrc_properties_typeProperties_database": {
+			"value": "projectsource"
+		},
+		"SQLDBSrc_properties_typeProperties_userName": {
+			"value": "source-admin"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
