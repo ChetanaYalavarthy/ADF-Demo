@@ -5,7 +5,7 @@
 		"type": "AzureDatabricksDeltaLake",
 		"typeProperties": {
 			"domain": "https://adb-7405614365516627.7.azuredatabricks.net/",
-			"clusterId": "0328-055939-x8x1r2gy-v2n",
+			"clusterId": "/sql/1.0/warehouses/c3f4f664564693c4",
 			"accessToken": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
