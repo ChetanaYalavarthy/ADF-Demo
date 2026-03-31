@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SQLDBSrc'"
 		},
+		"mongo_src_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'mongo_src'"
+		},
 		"ADLSink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://datalakestrgdev.dfs.core.windows.net/"
@@ -35,6 +39,18 @@
 			"type": "string",
 			"defaultValue": "4c2413cd-9c4c-45de-ae9b-d45a9ebcf350"
 		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "projectdevv.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "projectdev"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "projectdev-admin"
+		},
 		"KeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://keyvaultdfordev.vault.azure.net/"
@@ -54,6 +70,10 @@
 		"SQLDBSrc_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "source-admin"
+		},
+		"mongo_src_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sample_analytics"
 		},
 		"containerUri": {
 			"type": "string",
@@ -85,6 +105,9 @@
 					"SQLDBSrc_password": {
 						"value": "[parameters('SQLDBSrc_password')]"
 					},
+					"mongo_src_connectionString": {
+						"value": "[parameters('mongo_src_connectionString')]"
+					},
 					"KeyVault_properties_typeProperties_baseUrl": {
 						"value": "[parameters('KeyVault_properties_typeProperties_baseUrl')]"
 					},
@@ -99,6 +122,9 @@
 					},
 					"SQLDBSrc_properties_typeProperties_userName": {
 						"value": "[parameters('SQLDBSrc_properties_typeProperties_userName')]"
+					},
+					"mongo_src_properties_typeProperties_database": {
+						"value": "[parameters('mongo_src_properties_typeProperties_database')]"
 					},
 					"ADLSink_properties_typeProperties_url": {
 						"value": "[parameters('ADLSink_properties_typeProperties_url')]"
@@ -117,10 +143,39 @@
 					},
 					"ADLSrc_properties_typeProperties_servicePrincipalId": {
 						"value": "[parameters('ADLSrc_properties_typeProperties_servicePrincipalId')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "projctdevadf_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'projctdevadf_ArmTemplate_0')]"
+			]
 		}
 	]
 }

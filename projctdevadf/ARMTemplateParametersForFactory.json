@@ -8,6 +8,9 @@
 		"SQLDBSrc_password": {
 			"value": ""
 		},
+		"mongo_src_connectionString": {
+			"value": ""
+		},
 		"ADLSink_properties_typeProperties_url": {
 			"value": "https://datalakestrgdev.dfs.core.windows.net/"
 		},
@@ -26,6 +29,15 @@
 		"ADLSrc_properties_typeProperties_servicePrincipalId": {
 			"value": "4c2413cd-9c4c-45de-ae9b-d45a9ebcf350"
 		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "projectdevv.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "projectdev"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "projectdev-admin"
+		},
 		"KeyVault_properties_typeProperties_baseUrl": {
 			"value": "https://keyvaultdfordev.vault.azure.net/"
 		},
@@ -40,6 +52,9 @@
 		},
 		"SQLDBSrc_properties_typeProperties_userName": {
 			"value": "source-admin"
+		},
+		"mongo_src_properties_typeProperties_database": {
+			"value": "sample_analytics"
 		}
 	}
 }
