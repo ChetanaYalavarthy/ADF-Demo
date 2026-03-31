@@ -1,0 +1,56 @@
+{
+	"name": "copysrcdata",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqltablescopy",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "copysqltables",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "copyadlsdata",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "copydatalake",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "copyairlinesdata",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "copy web activity",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			}
+		],
+		"annotations": []
+	}
+}

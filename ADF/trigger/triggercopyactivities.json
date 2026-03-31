@@ -9,6 +9,12 @@
 					"referenceName": "copy web activity",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "copysrcdata",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
@@ -23,7 +29,7 @@
 						0
 					],
 					"hours": [
-						0
+						12
 					]
 				}
 			}
