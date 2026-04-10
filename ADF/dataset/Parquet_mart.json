@@ -1,0 +1,19 @@
+{
+	"name": "Parquet_mart",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLSink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "mart"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
