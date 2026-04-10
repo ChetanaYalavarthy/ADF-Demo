@@ -233,7 +233,7 @@
 											{
 												"activity": "Copy Data",
 												"dependencyConditions": [
-													"Succeeded"
+													"Failed"
 												]
 											}
 										],
@@ -255,9 +255,9 @@
 										"type": "SetVariable",
 										"dependsOn": [
 											{
-												"activity": "Code",
+												"activity": "Copy Data",
 												"dependencyConditions": [
-													"Succeeded"
+													"Failed"
 												]
 											}
 										],
@@ -280,6 +280,12 @@
 										"dependsOn": [
 											{
 												"activity": "Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Code",
 												"dependencyConditions": [
 													"Succeeded"
 												]

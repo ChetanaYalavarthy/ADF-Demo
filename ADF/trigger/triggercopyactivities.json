@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "copy web activity",
+					"referenceName": "airlines",
 					"type": "PipelineReference"
 				}
 			},
