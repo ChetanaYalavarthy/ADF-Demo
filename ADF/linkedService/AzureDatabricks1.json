@@ -1,0 +1,23 @@
+{
+	"name": "AzureDatabricks1",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-7405614365516627.7.azuredatabricks.net/",
+			"accessToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "KeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "databricks-access-token"
+			},
+			"newClusterNodeType": "Standard_D64ds_v4",
+			"newClusterNumOfWorker": "2:4",
+			"newClusterVersion": "17.3.x-photon-scala2.13",
+			"clusterOption": "Autoscaling",
+			"newClusterInitScripts": []
+		}
+	}
+}
