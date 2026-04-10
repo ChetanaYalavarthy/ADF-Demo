@@ -1,5 +1,5 @@
 {
-	"name": "rawplane",
+	"name": "refresh_databricks",
 	"properties": {
 		"activities": [
 			{
@@ -15,13 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Workspace/run_notebook",
-					"baseParameters": {
-						"Layer_name": {
-							"value": "@variables('Layer_name')",
-							"type": "Expression"
-						}
-					}
+					"notebookPath": "/Workspace/run_notebook"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
