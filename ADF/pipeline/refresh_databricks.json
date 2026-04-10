@@ -15,7 +15,13 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Workspace/run_notebook"
+					"notebookPath": "/Workspace/run_notebook",
+					"baseParameters": {
+						"Layer_name": {
+							"value": "@pipeline().parameters.Layer_name",
+							"type": "Expression"
+						}
+					}
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
@@ -23,9 +29,9 @@
 				}
 			}
 		],
-		"variables": {
+		"parameters": {
 			"Layer_name": {
-				"type": "Array"
+				"type": "string"
 			}
 		},
 		"annotations": []
