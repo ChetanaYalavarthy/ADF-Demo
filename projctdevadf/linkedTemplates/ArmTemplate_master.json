@@ -75,6 +75,18 @@
 			"type": "string",
 			"defaultValue": "sample_analytics"
 		},
+		"SQLDBSink_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "projectdevv.database.windows.net"
+		},
+		"SQLDBSink_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "projectdev"
+		},
+		"SQLDBSink_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "projectdev-admin"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -152,6 +164,15 @@
 					},
 					"AzureSqlDatabase1_properties_typeProperties_userName": {
 						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"SQLDBSink_properties_typeProperties_server": {
+						"value": "[parameters('SQLDBSink_properties_typeProperties_server')]"
+					},
+					"SQLDBSink_properties_typeProperties_database": {
+						"value": "[parameters('SQLDBSink_properties_typeProperties_database')]"
+					},
+					"SQLDBSink_properties_typeProperties_userName": {
+						"value": "[parameters('SQLDBSink_properties_typeProperties_userName')]"
 					}
 				}
 			},
