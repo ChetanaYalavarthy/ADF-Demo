@@ -1,5 +1,5 @@
 {
-	"name": "copy_excel",
+	"name": "Email_send",
 	"properties": {
 		"activities": [
 			{
@@ -57,6 +57,30 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-02.eastus2.logic.azure.com:443/workflows/fafa0e1a1c4f42039c15bdb53057c37a/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=uXAXAu7uzEbd_vJsWzz9l5MF7XJ8-GcWVTKmsl5fkAc"
+				}
 			}
 		],
 		"annotations": []
