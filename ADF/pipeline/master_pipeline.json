@@ -183,7 +183,9 @@
 				"type": "array",
 				"defaultValue": [
 					"Cleansed",
-					"Mart"
+					"Cleansed_Data_Quality",
+					"Mart",
+					"Data_Quality_Mart"
 				]
 			}
 		},
