@@ -59,6 +59,18 @@
 			"type": "string",
 			"defaultValue": " https://airlabs.co/api/v9/airlines"
 		},
+		"SQLDBSink_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "projectdevv.database.windows.net"
+		},
+		"SQLDBSink_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "projectdev"
+		},
+		"SQLDBSink_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "projectdev-admin"
+		},
 		"SQLDBSrc_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "projectsrc.database.windows.net"
@@ -71,21 +83,13 @@
 			"type": "string",
 			"defaultValue": "source-admin"
 		},
+		"blobstorage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "blob-excel"
+		},
 		"mongo_src_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "sample_analytics"
-		},
-		"SQLDBSink_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "projectdevv.database.windows.net"
-		},
-		"SQLDBSink_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "projectdev"
-		},
-		"SQLDBSink_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "projectdev-admin"
 		},
 		"containerUri": {
 			"type": "string",
@@ -173,6 +177,9 @@
 					},
 					"SQLDBSink_properties_typeProperties_userName": {
 						"value": "[parameters('SQLDBSink_properties_typeProperties_userName')]"
+					},
+					"blobstorage_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('blobstorage_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},

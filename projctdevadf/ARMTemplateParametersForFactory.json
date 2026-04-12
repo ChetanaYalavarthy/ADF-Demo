@@ -44,6 +44,15 @@
 		"RestAPISrc_properties_typeProperties_url": {
 			"value": " https://airlabs.co/api/v9/airlines"
 		},
+		"SQLDBSink_properties_typeProperties_server": {
+			"value": "projectdevv.database.windows.net"
+		},
+		"SQLDBSink_properties_typeProperties_database": {
+			"value": "projectdev"
+		},
+		"SQLDBSink_properties_typeProperties_userName": {
+			"value": "projectdev-admin"
+		},
 		"SQLDBSrc_properties_typeProperties_server": {
 			"value": "projectsrc.database.windows.net"
 		},
@@ -53,17 +62,11 @@
 		"SQLDBSrc_properties_typeProperties_userName": {
 			"value": "source-admin"
 		},
+		"blobstorage_properties_typeProperties_connectionString_secretName": {
+			"value": "blob-excel"
+		},
 		"mongo_src_properties_typeProperties_database": {
 			"value": "sample_analytics"
-		},
-		"SQLDBSink_properties_typeProperties_server": {
-			"value": "projectdevv.database.windows.net"
-		},
-		"SQLDBSink_properties_typeProperties_database": {
-			"value": "projectdev"
-		},
-		"SQLDBSink_properties_typeProperties_userName": {
-			"value": "projectdev-admin"
 		}
 	}
 }
