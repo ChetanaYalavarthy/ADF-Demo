@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
+				"name": "airlinesweb",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -24,11 +24,11 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "Copy airlines",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Web1",
+						"activity": "airlinesweb",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -100,11 +100,11 @@
 				]
 			},
 			{
-				"name": "Stored procedure1",
+				"name": "pipelineerrorlog",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Web1",
+						"activity": "airlinesweb",
 						"dependencyConditions": [
 							"Failed"
 						]
