@@ -34,6 +34,32 @@
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "type",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "type",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Email_ID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Email_ID",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
@@ -80,6 +106,29 @@
 				"typeProperties": {
 					"method": "POST",
 					"url": "https://prod-02.eastus2.logic.azure.com:443/workflows/fafa0e1a1c4f42039c15bdb53057c37a/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=uXAXAu7uzEbd_vJsWzz9l5MF7XJ8-GcWVTKmsl5fkAc"
+				}
+			},
+			{
+				"name": "Fail1",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": {
+						"value": "@activity('Copy data1').output.error.code",
+						"type": "Expression"
+					},
+					"errorCode": {
+						"value": "@activity('Copy data1').output.error.message",
+						"type": "Expression"
+					}
 				}
 			}
 		],
