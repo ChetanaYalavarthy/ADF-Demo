@@ -119,20 +119,53 @@
 								},
 								"ifFalseActivities": [
 									{
-										"name": "Set variable1",
-										"type": "SetVariable",
+										"name": "auditlog",
+										"type": "SqlServerStoredProcedure",
 										"dependsOn": [],
 										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
 											"secureOutput": false,
 											"secureInput": false
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "File Not exists",
-											"value": {
-												"value": "@concat(\n  'File: ',\n    activity('GetMetadata').output.itemName,\n  ' | Status: Skipped',\n  ' | ErrorType: FileNotFound',\n  ' | Time: ',\n  utcNow()\n)",
-												"type": "Expression"
+											"storedProcedureName": "[metadata].[usp_log_missing_file]",
+											"storedProcedureParameters": {
+												"fileName": {
+													"value": {
+														"value": "@item().File_name_source",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"pipelineName": {
+													"value": {
+														"value": "@pipeline().Pipeline",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"runID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"status": {
+													"value": {
+														"value": "'SKIPPED'",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
 											}
+										},
+										"linkedServiceName": {
+											"referenceName": "SQLDBSink",
+											"type": "LinkedServiceReference"
 										}
 									}
 								],
