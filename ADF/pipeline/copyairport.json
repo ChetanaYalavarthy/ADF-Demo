@@ -216,7 +216,7 @@
 														"type": "Expression"
 													},
 													"directory": {
-														"value": "@item().directory_sink",
+														"value": "@concat(split(item().File_name_sink,'.')[0],\n    '/year=',formatDateTime(utcNow(),'yyyy'),\n    '/month=',formatDateTime(utcNow(),'MM'),\n    '/day=',formatDateTime(utcNow(),'dd')\n    )",
 														"type": "Expression"
 													}
 												}
