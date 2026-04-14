@@ -40,8 +40,6 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Lookup1",
@@ -90,8 +88,7 @@
 								},
 								"fieldList": [
 									"exists",
-									"itemName",
-									"childItems"
+									"itemName"
 								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
@@ -275,7 +272,7 @@
 										}
 									},
 									{
-										"name": "Stored procedure2",
+										"name": "errorlog",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
@@ -300,39 +297,39 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"storedProcedureName": "[dbo].[usp_LogPipelineError]",
+											"storedProcedureName": "[metadata].[usp_pipeline_log_error]",
 											"storedProcedureParameters": {
-												"ErrorMessage": {
+												"activityName": {
 													"value": {
-														"value": "@variables('Error Message')",
+														"value": "'Copy airport'",
 														"type": "Expression"
 													},
 													"type": "String"
 												},
-												"ErrorType": {
+												"errorCode": {
 													"value": {
 														"value": "@variables('Error Code')",
 														"type": "Expression"
 													},
 													"type": "String"
 												},
-												"FileName": {
+												"errorMessage": {
 													"value": {
-														"value": "@activity('GetMetadata').output.itemName",
+														"value": "@variables('Error Message')",
 														"type": "Expression"
 													},
 													"type": "String"
 												},
-												"RunId": {
+												"pipelineName": {
+													"value": {
+														"value": "@pipeline().Pipeline",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"runID": {
 													"value": {
 														"value": "@pipeline().RunId",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"Status": {
-													"value": {
-														"value": "'Failed'",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -340,7 +337,7 @@
 											}
 										},
 										"linkedServiceName": {
-											"referenceName": "SQLDBSrc",
+											"referenceName": "SQLDBSink",
 											"type": "LinkedServiceReference"
 										}
 									}
