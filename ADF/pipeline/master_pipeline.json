@@ -12,7 +12,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "airport",
+						"referenceName": "copyadls",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -28,7 +28,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "airlines",
+						"referenceName": "copyairlines",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -44,7 +44,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "sqltables",
+						"referenceName": "copysqltables",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
