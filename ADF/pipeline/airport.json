@@ -1,0 +1,152 @@
+{
+	"name": "airport",
+	"properties": {
+		"activities": [
+			{
+				"name": "airportLookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Json",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "Airport.json",
+							"container": "manualfiles"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "airportLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('airportLookup').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "airportsrc",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": {
+											"value": "@item().container_source",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().File_name_source",
+											"type": "Expression"
+										},
+										"directory": {
+											"value": "@item().directory_source",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "airportsink",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": {
+											"value": "@item().container_sink",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().File_name_sink",
+											"type": "Expression"
+										},
+										"directory": {
+											"value": "@concat(split(item().File_name_sink,'.')[0],\n    '/year=',formatDateTime(utcNow(),'yyyy'),\n    '/month=',formatDateTime(utcNow(),'MM'),\n    '/day=',formatDateTime(utcNow(),'dd')\n    )",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-03-26T08:36:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

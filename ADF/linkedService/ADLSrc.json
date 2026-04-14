@@ -1,0 +1,22 @@
+{
+	"name": "ADLSrc",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://sorceadls.dfs.core.windows.net/",
+			"tenant": "abd71d73-ca15-43d0-b31b-f80bf5d0bfde",
+			"servicePrincipalId": "4c2413cd-9c4c-45de-ae9b-d45a9ebcf350",
+			"servicePrincipalCredentialType": "ServicePrincipalKey",
+			"servicePrincipalCredential": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "KeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "app-secret-value"
+			}
+		}
+	}
+}
