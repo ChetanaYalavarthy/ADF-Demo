@@ -79,7 +79,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"url": {
-								"value": "@activity('Web1').output.value",
+								"value": "@activity('airlinesweb').output.value",
 								"type": "Expression"
 							}
 						}
@@ -130,14 +130,14 @@
 						},
 						"errorCode": {
 							"value": {
-								"value": "@activity('Web1').output.error.code",
+								"value": "@activity('airlinesweb').output.error.code",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"errorMessage": {
 							"value": {
-								"value": "@activity('Web1').output.error.message",
+								"value": "@activity('airlinesweb').output.error.message",
 								"type": "Expression"
 							},
 							"type": "String"
