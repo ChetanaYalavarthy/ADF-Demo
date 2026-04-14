@@ -133,13 +133,6 @@
 										"typeProperties": {
 											"storedProcedureName": "[metadata].[usp_log_missing_file]",
 											"storedProcedureParameters": {
-												"fileName": {
-													"value": {
-														"value": "@item().File_name_source",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
 												"pipelineName": {
 													"value": {
 														"value": "@pipeline().Pipeline",
@@ -154,11 +147,22 @@
 													},
 													"type": "String"
 												},
-												"status": {
+												"sourceContainer": {
 													"value": {
-														"value": "'SKIPPED'",
+														"value": "@item().container_source",
 														"type": "Expression"
 													},
+													"type": "String"
+												},
+												"sourceFileName": {
+													"value": {
+														"value": "@item().File_name_source",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"status": {
+													"value": "SKIPPED",
 													"type": "String"
 												}
 											}
