@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "sqlLookup",
+				"name": "copysqltables",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -42,7 +42,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "sqlLookup",
+						"activity": "copysqltables",
 						"dependencyConditions": [
 							"Succeeded"
 						]
