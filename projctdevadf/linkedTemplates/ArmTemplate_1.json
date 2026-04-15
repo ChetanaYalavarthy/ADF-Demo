@@ -144,6 +144,32 @@
 							"enableStaging": false,
 							"translator": {
 								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "type",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "type",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Email_ID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Email_ID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
 								"typeConversion": true,
 								"typeConversionSettings": {
 									"allowDataTruncation": true,
@@ -194,6 +220,29 @@
 							"url": "https://prod-02.eastus2.logic.azure.com:443/workflows/fafa0e1a1c4f42039c15bdb53057c37a/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=uXAXAu7uzEbd_vJsWzz9l5MF7XJ8-GcWVTKmsl5fkAc",
 							"body": {}
 						}
+					},
+					{
+						"name": "Fail1",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": {
+								"value": "@activity('Copy data1').output.error.code",
+								"type": "Expression"
+							},
+							"errorCode": {
+								"value": "@activity('Copy data1').output.error.message",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -204,280 +253,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/airlines')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Web1",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "GET",
-							"headers": {},
-							"url": "https://keyvaultdfordev.vault.azure.net/secrets/api-key/15a46755c2d84b24b0f308cd8435864f?api-version=7.0",
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://vault.azure.net"
-							}
-						}
-					},
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Web1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['response']"
-										},
-										"sink": {
-											"path": "$['response']"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Restairlines",
-								"type": "DatasetReference",
-								"parameters": {
-									"url": {
-										"value": "@activity('Web1').output.value",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Json_sink",
-								"type": "DatasetReference",
-								"parameters": {
-									"container": "raw",
-									"filename": {
-										"value": "@concat('airlines/','year=',formatDateTime(utcnow(),'yyyy'),\r\n    '/month=',formatDateTime(utcnow(),'MM'),\r\n    '/day=',formatDateTime(utcnow(),'dd'),\r\n    '/airline.json'\r\n    )",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-03-26T08:35:18Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/airport')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "airportLookup",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "Json",
-								"type": "DatasetReference",
-								"parameters": {
-									"filename": "Airport.json",
-									"container": "manualfiles"
-								}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "airportLookup",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('airportLookup').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "airportsrc",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@item().container_source",
-													"type": "Expression"
-												},
-												"filename": {
-													"value": "@item().File_name_source",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@item().directory_source",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "airportsink",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@item().container_sink",
-													"type": "Expression"
-												},
-												"filename": {
-													"value": "@item().File_name_sink",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(split(item().File_name_sink,'.')[0],\n    '/year=',formatDateTime(utcNow(),'yyyy'),\n    '/month=',formatDateTime(utcNow(),'MM'),\n    '/day=',formatDateTime(utcNow(),'dd')\n    )",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-03-26T08:36:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/airportsrc')]",
-				"[concat(variables('factoryId'), '/datasets/airportsink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copyairport')]",
+			"name": "[concat(parameters('factoryName'), '/copyadls')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -520,8 +296,6 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "Lookup1",
@@ -570,8 +344,7 @@
 										},
 										"fieldList": [
 											"exists",
-											"itemName",
-											"childItems"
+											"itemName"
 										],
 										"storeSettings": {
 											"type": "AzureBlobFSReadSettings",
@@ -602,20 +375,57 @@
 										},
 										"ifFalseActivities": [
 											{
-												"name": "Set variable1",
-												"type": "SetVariable",
+												"name": "auditlog",
+												"type": "SqlServerStoredProcedure",
 												"dependsOn": [],
 												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
 													"secureOutput": false,
 													"secureInput": false
 												},
 												"userProperties": [],
 												"typeProperties": {
-													"variableName": "File Not exists",
-													"value": {
-														"value": "@concat(\n  'File: ',\n    activity('GetMetadata').output.itemName,\n  ' | Status: Skipped',\n  ' | ErrorType: FileNotFound',\n  ' | Time: ',\n  utcNow()\n)",
-														"type": "Expression"
+													"storedProcedureName": "[[metadata].[usp_log_missing_file]",
+													"storedProcedureParameters": {
+														"pipelineName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"runID": {
+															"value": {
+																"value": "@pipeline().RunId",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"sourceContainer": {
+															"value": {
+																"value": "@item().container_source",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"sourceFileName": {
+															"value": {
+																"value": "@item().File_name_source",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"status": {
+															"value": "SKIPPED",
+															"type": "String"
+														}
 													}
+												},
+												"linkedServiceName": {
+													"referenceName": "SQLDBSink",
+													"type": "LinkedServiceReference"
 												}
 											}
 										],
@@ -699,7 +509,7 @@
 																"type": "Expression"
 															},
 															"directory": {
-																"value": "@item().directory_sink",
+																"value": "@concat(split(item().File_name_sink,'.')[0],\n    '/year=',formatDateTime(utcNow(),'yyyy'),\n    '/month=',formatDateTime(utcNow(),'MM'),\n    '/day=',formatDateTime(utcNow(),'dd')\n    )",
 																"type": "Expression"
 															}
 														}
@@ -755,7 +565,7 @@
 												}
 											},
 											{
-												"name": "Stored procedure2",
+												"name": "errorlog",
 												"type": "SqlServerStoredProcedure",
 												"dependsOn": [
 													{
@@ -780,39 +590,39 @@
 												},
 												"userProperties": [],
 												"typeProperties": {
-													"storedProcedureName": "[[dbo].[usp_LogPipelineError]",
+													"storedProcedureName": "[[metadata].[usp_pipeline_log_error]",
 													"storedProcedureParameters": {
-														"ErrorMessage": {
+														"activityName": {
 															"value": {
-																"value": "@variables('Error Message')",
+																"value": "'Copy airport'",
 																"type": "Expression"
 															},
 															"type": "String"
 														},
-														"ErrorType": {
+														"errorCode": {
 															"value": {
 																"value": "@variables('Error Code')",
 																"type": "Expression"
 															},
 															"type": "String"
 														},
-														"FileName": {
+														"errorMessage": {
 															"value": {
-																"value": "@activity('GetMetadata').output.itemName",
+																"value": "@variables('Error Message')",
 																"type": "Expression"
 															},
 															"type": "String"
 														},
-														"RunId": {
+														"pipelineName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"runID": {
 															"value": {
 																"value": "@pipeline().RunId",
-																"type": "Expression"
-															},
-															"type": "String"
-														},
-														"Status": {
-															"value": {
-																"value": "'Failed'",
 																"type": "Expression"
 															},
 															"type": "String"
@@ -820,7 +630,7 @@
 													}
 												},
 												"linkedServiceName": {
-													"referenceName": "SQLDBSrc",
+													"referenceName": "SQLDBSink",
 													"type": "LinkedServiceReference"
 												}
 											}
@@ -852,6 +662,472 @@
 				"[concat(variables('factoryId'), '/datasets/airportsrc')]",
 				"[concat(variables('factoryId'), '/datasets/airportsink')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/copyairlines')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "airlinesweb",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": "https://keyvaultdfordev.vault.azure.net/secrets/api-key/15a46755c2d84b24b0f308cd8435864f?api-version=7.0",
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Copy airlines",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "airlinesweb",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['response']"
+										},
+										"sink": {
+											"path": "$['response']"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Restairlines",
+								"type": "DatasetReference",
+								"parameters": {
+									"url": {
+										"value": "@activity('airlinesweb').output.value",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json_sink",
+								"type": "DatasetReference",
+								"parameters": {
+									"container": "raw",
+									"filename": {
+										"value": "@concat('airlines/','year=',formatDateTime(utcnow(),'yyyy'),\r\n    '/month=',formatDateTime(utcnow(),'MM'),\r\n    '/day=',formatDateTime(utcnow(),'dd'),\r\n    '/airline.json'\r\n    )",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "pipelineerrorlog",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "airlinesweb",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[metadata].[usp_pipeline_log_error]",
+							"storedProcedureParameters": {
+								"activityName": {
+									"value": {
+										"value": "GET API",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"errorCode": {
+									"value": {
+										"value": "@activity('airlinesweb').output.error.code",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"errorMessage": {
+									"value": {
+										"value": "@activity('airlinesweb').output.error.message",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipelineName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"runID": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDBSink",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-03-26T08:35:18Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/copysqltables')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copysqltables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Json",
+								"type": "DatasetReference",
+								"parameters": {
+									"filename": "Table_SQL.json",
+									"container": "manualfiles"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "copysqltables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('copysqltables').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Get Metadata1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SQLDBTable",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().table_name_source",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Parquet_sink",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "errorlog",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Copy data1",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[metadata].[usp_pipeline_log_error]",
+										"storedProcedureParameters": {
+											"activityName": {
+												"value": {
+													"value": "'Copy Sql Tables'",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"errorCode": {
+												"value": {
+													"value": "@activity('Copy data1').output.errors[0].Code",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"errorMessage": {
+												"value": {
+													"value": "@activity('Copy data1').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"pipelineName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"runID": {
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "SQLDBSink",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Get Metadata1",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "SQLDBTable",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().table_name_source",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"exists",
+											"structure"
+										]
+									}
+								},
+								{
+									"name": "fileauditlog",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Get Metadata1",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[metadata].[usp_log_missing_file]",
+										"storedProcedureParameters": {
+											"pipelineName": {
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"runID": {
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"sourceContainer": {
+												"value": {
+													"value": "SQL DB",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"sourceFileName": {
+												"value": {
+													"value": "@item().table_name_source",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"status": {
+												"value": "'SKIPPED'",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "SQLDBSink",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-03-26T08:36:56Z"
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/mart_to_sqldb')]",
@@ -939,6 +1215,70 @@
 											}
 										}
 									]
+								},
+								{
+									"name": "Stored procedure1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Copy data1",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[metadata].[usp_pipeline_log_error]",
+										"storedProcedureParameters": {
+											"activityName": {
+												"value": {
+													"value": "'Copy Dim Table'",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"errorCode": {
+												"value": {
+													"value": "@activity('Copy data1').output.errors[0].Code",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"errorMessage": {
+												"value": {
+													"value": "@activity('Copy data1').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"pipelineName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"runID": {
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "SQLDBSink",
+										"type": "LinkedServiceReference"
+									}
 								}
 							]
 						}
@@ -968,134 +1308,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/sqltables')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "sqlLookup",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "Json",
-								"type": "DatasetReference",
-								"parameters": {
-									"filename": "Table_SQL.json",
-									"container": "manualfiles"
-								}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "sqlLookup",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('sqlLookup').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "ParquetSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "ParquetWriteSettings"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "SQLDBTable",
-											"type": "DatasetReference",
-											"parameters": {
-												"tableName": {
-													"value": "@item().table_name_source",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "Parquet_sink",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-03-26T08:36:56Z"
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/master_pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1111,7 +1323,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "airport",
+								"referenceName": "copyadls",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -1128,7 +1340,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "airlines",
+								"referenceName": "copyairlines",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -1145,7 +1357,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "sqltables",
+								"referenceName": "copysqltables",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -1299,9 +1511,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/airport')]",
-				"[concat(variables('factoryId'), '/pipelines/airlines')]",
-				"[concat(variables('factoryId'), '/pipelines/sqltables')]",
+				"[concat(variables('factoryId'), '/pipelines/copyadls')]",
+				"[concat(variables('factoryId'), '/pipelines/copyairlines')]",
+				"[concat(variables('factoryId'), '/pipelines/copysqltables')]",
 				"[concat(variables('factoryId'), '/pipelines/mart_to_sqldb')]",
 				"[concat(variables('factoryId'), '/pipelines/Email_send')]"
 			]
@@ -1316,7 +1528,14 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "airlines",
+							"referenceName": "copyairlines",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "master_pipeline",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -1341,7 +1560,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/airlines')]"
+				"[concat(variables('factoryId'), '/pipelines/copyairlines')]",
+				"[concat(variables('factoryId'), '/pipelines/master_pipeline')]"
 			]
 		}
 	]

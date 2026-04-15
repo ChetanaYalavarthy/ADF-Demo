@@ -417,6 +417,59 @@
 							"referenceName": "AzureDatabricks1",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Notebook1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "notebook_failure_payload",
+							"value": {
+								"value": "@string(activity('Notebook1').output)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "WebNB",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://prod-27.westus2.logic.azure.com:443/workflows/739e799c7c764142b68d1d3331e4cf6c/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=qqNcdz9fZV67INMN38t4enE-55YyQwUIgy6iIK_n0q8",
+							"body": {
+								"value": "@json(concat(\n'{',\n'\"folderPath\":\"logs/notebook_failures/',\nformatDateTime(utcNow(),'yyyy/MM/dd'),\n'\",',\n'\"fileName\":\"',\npipeline().Pipeline,\n'_',\npipeline().RunId,\n'.json\",',\n'\"runPageUrl\":\"',\nreplace(json(variables('notebook_failure_payload')).runPageUrl,'\"',''),\n'\",',\n'\"runError\":\"',\nreplace(json(variables('notebook_failure_payload')).runError,'\"',''),\n'\",',\n'\"executionDuration\":',\nstring(json(variables('notebook_failure_payload')).executionDuration),\n'}'\n))",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -424,7 +477,13 @@
 				},
 				"parameters": {
 					"Layer_name": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "Raw"
+					}
+				},
+				"variables": {
+					"notebook_failure_payload": {
+						"type": "String"
 					}
 				},
 				"annotations": []
