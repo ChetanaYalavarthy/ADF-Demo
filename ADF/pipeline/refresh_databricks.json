@@ -73,7 +73,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"url": "https://prod-04.westus2.logic.azure.com:443/workflows/4fbd499944ce4ca7967bb96be62afcd2/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=alqltxPOmNF1mxOu5YJvR7n6dHlD1frw3TDomswk3sc",
+					"url": "https://prod-27.westus2.logic.azure.com:443/workflows/739e799c7c764142b68d1d3331e4cf6c/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=qqNcdz9fZV67INMN38t4enE-55YyQwUIgy6iIK_n0q8",
 					"body": {
 						"value": "@json(concat(\n'{',\n'\"folderPath\":\"notebook_failures/',\nformatDateTime(utcNow(),'yyyy/MM/dd'),\n'\",',\n'\"fileName\":\"',\npipeline().Pipeline,\n'_',\npipeline().RunId,\n'.json\",',\n'\"runPageUrl\":\"',\nreplace(json(variables('notebook_failure_payload')).runPageUrl,'\"',''),\n'\",',\n'\"runError\":\"',\nreplace(json(variables('notebook_failure_payload')).runError,'\"',''),\n'\",',\n'\"executionDuration\":',\nstring(json(variables('notebook_failure_payload')).executionDuration),\n'}'\n))",
 						"type": "Expression"
