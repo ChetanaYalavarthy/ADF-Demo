@@ -44,7 +44,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "copysqltables",
+						"referenceName": "CopySQLDB",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
