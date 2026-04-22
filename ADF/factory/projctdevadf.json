@@ -4,7 +4,8 @@
 		"globalConfigurations": {
 			"factoryStagingLSReferenceName": "ADLSrc",
 			"factoryStagingLSType": "LinkedServiceReference",
-			"factoryStagingFolderPath": "manualfiles"
+			"factoryStagingFolderPath": "manualfiles",
+			"PipelineBillingEnabled": "true"
 		}
 	},
 	"location": "eastus",
