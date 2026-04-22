@@ -1,0 +1,6 @@
+{
+	"name": "VMself-hosted",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
