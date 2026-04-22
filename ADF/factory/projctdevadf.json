@@ -1,5 +1,11 @@
 {
 	"name": "projctdevadf",
+	"properties": {
+		"globalConfigurations": {
+			"factoryStagingLSReferenceName": "ADLSrc",
+			"factoryStagingLSType": "LinkedServiceReference"
+		}
+	},
 	"location": "eastus",
 	"identity": {
 		"type": "SystemAssigned",
