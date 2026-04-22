@@ -3,7 +3,8 @@
 	"properties": {
 		"globalConfigurations": {
 			"factoryStagingLSReferenceName": "ADLSrc",
-			"factoryStagingLSType": "LinkedServiceReference"
+			"factoryStagingLSType": "LinkedServiceReference",
+			"factoryStagingFolderPath": "manualfiles"
 		}
 	},
 	"location": "eastus",
